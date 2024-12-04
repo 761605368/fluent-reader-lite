@@ -106,20 +106,19 @@ class _GeneralPageState extends State<GeneralPage> {
               ),
               MyListTile(
                 title: Text(S.of(context).autoDelete),
-                trailing:
-                    Text(S.of(context).daysAgo(globalModel.keepItemsDays)),
+                trailing: Text(S.of(context).daysAgo(globalModel.keepItemsDays)),
                 trailingChevron: false,
                 withDivider: false,
               ),
               MyListTile(
                 title: Expanded(
                     child: CupertinoSlider(
-                  min: 1,
-                  max: 4,
-                  divisions: 3,
-                  value: (globalModel.keepItemsDays ~/ 7).toDouble(),
+                  min: 0,
+                  max: 360,
+                  divisions: 36,
+                  value: globalModel.keepItemsDays.toDouble(),
                   onChanged: (v) {
-                    globalModel.keepItemsDays = (v * 7).toInt();
+                    globalModel.keepItemsDays = v.toInt();
                     setState(() {});
                   },
                 )),
