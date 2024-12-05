@@ -1,0 +1,71 @@
+name: Build Android without null safety
+
+on:
+  push:
+    branches:
+      - main # 或者你使用的分支名称
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # 手动触发选项
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '11'
+
+    - name: Set up Old Dart (without null safety)
+      uses: dart-lang/setup-dart@v1
+      with:
+        dart-version: '2.7.2'  # 使用具体版本号，确保它是不带空安全特性的版本
+
+    - name: Print environment info
+      run: |
+        echo "PATH=$PATH"
+        which dart || echo "Dart not found in PATH"
+        dart --version
+
+    - name: Set up Flutter (compatible with old Dart)
+      uses: subosito/flutter-action@v2.5.0
+      with:
+        flutter-version: '1.22.6'  # 选择一个与旧 Dart SDK 兼容的 Flutter 版本
+
+    - name: Cache Flutter packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.pub-cache
+        key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pub-
+
+    - name: Get Flutter packages
+      run: flutter pub get
+
+    - name: Build APK or AAB
+      run: |
+        BUILD_TYPE="apk"  # 或者用 "aab" 构建AAB
+        if [ "$BUILD_TYPE" == "aab" ]; then
+          flutter build appbundle --release
+        else
+          flutter build apk --release
+        fi
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: android-release
+        path: |
+          if [ "$BUILD_TYPE" == "aab" ]; then
+            build/app/outputs/bundle/release/*.aab
+          else
+            build/app/outputs/flutter-apk/app-release.apk
+          fi
