@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:fluent_reader_lite/utils/store.dart';
 import 'package:flutter/material.dart';
 
+import 'config/env_config.dart';
+
 enum ThemeSetting {
   Default, Light, Dark
 }
@@ -10,10 +12,14 @@ enum ThemeSetting {
 class GlobalModel with ChangeNotifier {
   ThemeSetting _theme = Store.getTheme();
   Locale _locale = Store.getLocale();
-  int _keepItemsDays = Store.sp.getInt(StoreKeys.KEEP_ITEMS_DAYS) ?? 21;
+  int _keepItemsDays = Store.sp.getInt(StoreKeys.KEEP_ITEMS_DAYS) ?? 
+    EnvConfig.keepItemsDays;
   bool _syncOnStart = Store.sp.getBool(StoreKeys.SYNC_ON_START) ?? true;
   bool _inAppBrowser = Store.sp.getBool(StoreKeys.IN_APP_BROWSER) ?? Platform.isIOS;
   double _textScale = Store.sp.getDouble(StoreKeys.TEXT_SCALE);
+  double _ttsSpeed = Store.sp.getDouble(StoreKeys.TTS_SPEED) ?? 1.0;
+  String _ttsLanguage = Store.sp.getString(StoreKeys.TTS_LANGUAGE) ?? 'zh-CN';
+  bool _ttsEnabled = Store.sp.getBool(StoreKeys.TTS_ENABLED) ?? true;
 
   ThemeSetting get theme => _theme;
   set theme(ThemeSetting value) {
@@ -66,5 +72,27 @@ class GlobalModel with ChangeNotifier {
         Store.sp.setDouble(StoreKeys.TEXT_SCALE, value);
       }
     }
+  }
+
+  double get ttsSpeed => _ttsSpeed;
+  String get ttsLanguage => _ttsLanguage;
+  bool get ttsEnabled => _ttsEnabled;
+
+  set ttsSpeed(double value) {
+    _ttsSpeed = value;
+    Store.sp.setDouble(StoreKeys.TTS_SPEED, value);
+    notifyListeners();
+  }
+
+  set ttsLanguage(String value) {
+    _ttsLanguage = value;
+    Store.sp.setString(StoreKeys.TTS_LANGUAGE, value);
+    notifyListeners();
+  }
+
+  set ttsEnabled(bool value) {
+    _ttsEnabled = value;
+    Store.sp.setBool(StoreKeys.TTS_ENABLED, value);
+    notifyListeners();
   }
 }

@@ -1,5 +1,5 @@
 enum SourceOpenTarget {
-    Local, FullContent, Webpage, External
+    Local, FullContent, Webpage, External, InApp
 }
 
 class RSSSource {
@@ -13,44 +13,21 @@ class RSSSource {
   String lastTitle;
 
   RSSSource(this.id, this.url, this.name) {
-    openTarget = SourceOpenTarget.Local;
-    latest = DateTime.now();
+    iconUrl = '';
+    openTarget = SourceOpenTarget.InApp;
     unreadCount = 0;
-    lastTitle = "";
-  }
-
-  RSSSource._privateConstructor(
-    this.id, this.url, this.iconUrl, this.name, this.openTarget,
-    this.unreadCount, this.latest, this.lastTitle,
-  );
-
-  RSSSource clone() {
-    return RSSSource._privateConstructor(
-      this.id, this.url, this.iconUrl, this.name, this.openTarget,
-      this.unreadCount, this.latest, this.lastTitle,
-    );
-  }
-
-  Map<String, dynamic> toMap() {
-    return {
-      "sid": id,
-      "url": url,
-      "iconUrl": iconUrl,
-      "name": name,
-      "openTarget": openTarget.index,
-      "latest": latest.millisecondsSinceEpoch,
-      "lastTitle": lastTitle,
-    };
+    latest = DateTime.now();
+    lastTitle = '';
   }
 
   RSSSource.fromMap(Map<String, dynamic> map) {
-    id = map["sid"];
-    url = map["url"];
-    iconUrl = map["iconUrl"];
-    name = map["name"];
-    openTarget = SourceOpenTarget.values[map["openTarget"]];
-    latest = DateTime.fromMillisecondsSinceEpoch(map["latest"]);
-    lastTitle = map["lastTitle"];
-    unreadCount = 0;
+    id = map['id'];
+    url = map['url'];
+    name = map['name'];
+    iconUrl = map['iconUrl'] ?? '';
+    openTarget = SourceOpenTarget.values[map['openTarget'] ?? 0];
+    unreadCount = map['unreadCount'] ?? 0;
+    latest = DateTime.fromMillisecondsSinceEpoch(map['latest'] ?? DateTime.now().millisecondsSinceEpoch);
+    lastTitle = map['lastTitle'] ?? '';
   }
 }

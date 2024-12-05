@@ -2,6 +2,7 @@ import 'package:fluent_reader_lite/components/list_tile_group.dart';
 import 'package:fluent_reader_lite/components/my_list_tile.dart';
 import 'package:fluent_reader_lite/generated/l10n.dart';
 import 'package:fluent_reader_lite/models/global_model.dart';
+import 'package:fluent_reader_lite/services/tts_service.dart';
 import 'package:fluent_reader_lite/utils/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -157,6 +158,59 @@ class _GeneralPageState extends State<GeneralPage> {
               },
               title: S.of(context).language,
             );
+            final ttsItems = ListTileGroup([
+              MyListTile(
+                title: Text(S.of(context).ttsEnabled),
+                trailing: CupertinoSwitch(
+                  value: globalModel.ttsEnabled,
+                  onChanged: (v) {
+                    globalModel.ttsEnabled = v;
+                    if (!v) TTSService().stop();
+                  },
+                ),
+              ),
+              if (globalModel.ttsEnabled) ...[
+                MyListTile(
+                  title: Text(S.of(context).ttsSpeed),
+                  trailing: CupertinoSlider(
+                    min: 0.5,
+                    max: 2.0,
+                    divisions: 3,
+                    value: globalModel.ttsSpeed,
+                    onChanged: (v) {
+                      globalModel.ttsSpeed = v;
+                      TTSService().flutterTts.setSpeechRate(v);
+                    },
+                  ),
+                ),
+                MyListTile(
+                  title: Text(S.of(context).ttsLanguage),
+                  trailing: Text(globalModel.ttsLanguage),
+                  onTap: () async {
+                    final languages = await TTSService().getAvailableLanguages();
+                    showCupertinoModalPopup(
+                      context: context,
+                      builder: (context) => CupertinoActionSheet(
+                        actions: languages.map((lang) => 
+                          CupertinoActionSheetAction(
+                            child: Text(lang),
+                            onPressed: () {
+                              globalModel.ttsLanguage = lang;
+                              TTSService().init();
+                              Navigator.pop(context);
+                            },
+                          )
+                        ).toList(),
+                        cancelButton: CupertinoActionSheetAction(
+                          child: Text(S.of(context).cancel),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ], title: S.of(context).ttsSettings);
             return ListView(
               children: [
                 syncItems,
@@ -164,6 +218,7 @@ class _GeneralPageState extends State<GeneralPage> {
                 storageItems,
                 themeItems,
                 localeItems,
+                ttsItems,
               ],
             );
           },

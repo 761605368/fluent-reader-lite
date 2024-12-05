@@ -30,7 +30,7 @@ class ItemListPage extends StatefulWidget {
 }
 
 class _ItemListPageState extends State<ItemListPage> {
-  DateTime lastLoadedMore;
+  late DateTime lastLoadedMore = DateTime.now();
 
   void _onScrollTop() {
     var expectedCanPop = widget.scrollTopNotifier.index == 1;

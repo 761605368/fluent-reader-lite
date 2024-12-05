@@ -13,19 +13,16 @@ import '../item.dart';
 import '../source.dart';
 
 class FeedbinServiceHandler extends ServiceHandler {
-  String endpoint;
-  String username;
-  String password;
-  int fetchLimit;
-  int _lastId;
-  Tuple2<Set<String>, Set<String>> _lastSynced;
+  late String endpoint;
+  late String username;
+  late String password;
+  late int _lastId = 0;
+  late Tuple2<Set<String>, Set<String>> _lastSynced = Tuple2(Set(), Set());
 
   FeedbinServiceHandler() {
-    endpoint = Store.sp.getString(StoreKeys.ENDPOINT);
-    username = Store.sp.getString(StoreKeys.USERNAME);
-    password = Store.sp.getString(StoreKeys.PASSWORD);
-    fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT);
-    _lastId = Store.sp.getInt(StoreKeys.LAST_ID) ?? 0;
+    endpoint = Store.sp.getString(StoreKeys.ENDPOINT) ?? '';
+    username = Store.sp.getString(StoreKeys.USERNAME) ?? '';
+    password = Store.sp.getString(StoreKeys.PASSWORD) ?? '';
   }
 
   FeedbinServiceHandler.fromValues(

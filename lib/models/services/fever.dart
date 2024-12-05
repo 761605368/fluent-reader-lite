@@ -13,18 +13,16 @@ import 'package:tuple/tuple.dart';
 import '../service.dart';
 
 class FeverServiceHandler extends ServiceHandler {
-  String endpoint;
-  String apiKey;
-  int _lastId;
-  int fetchLimit;
-  bool _useInt32;
+  late String endpoint;
+  late String apiKey;
+  late int fetchLimit;
+  late int _lastId = 0;
+  late bool _useInt32 = false;
 
   FeverServiceHandler() {
-    endpoint = Store.sp.getString(StoreKeys.ENDPOINT);
-    apiKey = Store.sp.getString(StoreKeys.API_KEY);
-    _lastId = Store.sp.getInt(StoreKeys.LAST_ID) ?? 0;
-    fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT);
-    _useInt32 = Store.sp.getBool(StoreKeys.FEVER_INT_32) ?? false;
+    endpoint = Store.sp.getString(StoreKeys.ENDPOINT) ?? '';
+    apiKey = Store.sp.getString(StoreKeys.API_KEY) ?? '';
+    fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT) ?? 50;
   }
 
   FeverServiceHandler.fromValues(

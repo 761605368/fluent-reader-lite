@@ -20,6 +20,7 @@ import 'package:share/share.dart';
 import 'package:fluent_reader_lite/components/cupertino_toolbar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:fluent_reader_lite/services/tts_service.dart';
 
 class ArticlePage extends StatefulWidget {
   static final GlobalKey<ArticlePageState> state = GlobalKey();
@@ -40,6 +41,8 @@ class ArticlePageState extends State<ArticlePage> {
   SourceOpenTarget _target;
   String iid;
   bool isSourceFeed;
+  final TTSService _tts = TTSService();
+  bool _isReading = false;
 
   void loadNewItem(String id, {bool isSource}) {
     if (!Global.itemsModel.getItem(id).hasRead) {
@@ -146,6 +149,43 @@ class ArticlePageState extends State<ArticlePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _tts.init();
+  }
+
+  Widget _buildTTSButton(RSSItem item) {
+    if (!Global.globalModel.ttsEnabled) return Container();
+    
+    return CupertinoButton(
+      padding: EdgeInsets.zero,
+      child: Icon(
+        _isReading 
+          ? CupertinoIcons.pause_fill 
+          : CupertinoIcons.play_fill,
+        color: CupertinoColors.systemGrey,
+      ),
+      onPressed: () async {
+        if (_isReading) {
+          await _tts.pause();
+          setState(() {
+            _isReading = false;
+          });
+        } else {
+          final content = await _controller?.evaluateJavascript(
+            'document.querySelector("article").innerText'
+          ) ?? item.content;
+          
+          await _tts.speak(content);
+          setState(() {
+            _isReading = true;
+          });
+        }
+      },
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final Tuple2<String, bool> arguments =
         ModalRoute.of(context).settings.arguments;
@@ -230,6 +270,13 @@ class ArticlePageState extends State<ArticlePage> {
               },
               groupValue: _target.index,
             ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildTTSButton(item),
+                // ... 其他按钮
+              ],
+            ),
           ),
           child: Consumer<FeedsModel>(
             child: body,
@@ -312,5 +359,11 @@ class ArticlePageState extends State<ArticlePage> {
         );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    _tts.stop();
+    super.dispose();
   }
 }

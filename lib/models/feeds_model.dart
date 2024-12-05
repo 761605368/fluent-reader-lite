@@ -11,8 +11,12 @@ enum ItemSwipeOption {
 }
 
 class FeedsModel with ChangeNotifier {
-  RSSFeed all = RSSFeed();
-  RSSFeed source;
+  late RSSFeed all;
+  late RSSFeed source;
+
+  FeedsModel() {
+    all = RSSFeed();
+  }
 
   bool _showThumb = Store.sp.getBool(StoreKeys.SHOW_THUMB) ?? true;
   bool get showThumb => _showThumb;
@@ -64,13 +68,11 @@ class FeedsModel with ChangeNotifier {
 
   void addFetchedItems(Iterable<RSSItem> items) {
     for (var feed in [all, source]) {
-      if (feed == null) continue;
-      var lastDate = feed.iids.length > 0
-        ? Global.itemsModel.getItem(feed.iids.last).date
-        : null;
+      if (feed.iids.isEmpty) continue;
+      var lastDate = Global.itemsModel.getItem(feed.iids.last).date;
       for (var item in items) {
         if (!feed.testItem(item)) continue;
-        if (lastDate != null && item.date.isBefore(lastDate)) continue;
+        if (item.date.isBefore(lastDate)) continue;
         var idx = Utils.binarySearch(feed.iids, item.id, (a, b) {
           return Global.itemsModel.getItem(b).date.compareTo(Global.itemsModel.getItem(a).date);
         });
@@ -81,9 +83,7 @@ class FeedsModel with ChangeNotifier {
   }
 
   void initAll() {
-    for (var feed in [all, source]) {
-      if (feed == null) continue;
-      feed.init();
-    }
+    all.init();
+    source.init();
   }
 }

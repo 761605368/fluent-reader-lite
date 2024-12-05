@@ -35,13 +35,12 @@ class TextEditorPage extends StatefulWidget {
 }
 
 class _TextEditorPage extends State<TextEditorPage> {
-  TextEditingController _controller;
+  late TextEditingController _controller = TextEditingController(text: widget.initialValue);
   bool _validating = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = TextEditingController(text: widget.initialValue);
   }
 
   void _onSave() async {

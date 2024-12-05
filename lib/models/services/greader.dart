@@ -15,30 +15,26 @@ class GReaderServiceHandler extends ServiceHandler {
   static const _READ_TAG = "user/-/state/com.google/read";
   static const _STAR_TAG = "user/-/state/com.google/starred";
 
-  String endpoint;
-  String username;
-  String password;
-  int fetchLimit;
-  int _lastFetched;
-  String _lastId;
-  String _auth;
-  bool useInt64;
-  String inoreaderId;
-  String inoreaderKey;
-  bool removeInoreaderAd;
+  late String endpoint;
+  late String username;
+  late String password;
+  late int fetchLimit;
+  late int _lastFetched = 0;
+  late String _lastId = '';
+  late String _auth = '';
+  late bool useInt64 = true;
+  late String inoreaderId = '';
+  late String inoreaderKey = '';
+  late bool removeInoreaderAd = false;
 
   GReaderServiceHandler() {
-    endpoint = Store.sp.getString(StoreKeys.ENDPOINT);
-    username = Store.sp.getString(StoreKeys.USERNAME);
-    password = Store.sp.getString(StoreKeys.PASSWORD);
-    fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT);
-    _lastFetched = Store.sp.getInt(StoreKeys.LAST_FETCHED);
-    _lastId = Store.sp.getString(StoreKeys.LAST_ID);
-    _auth = Store.sp.getString(StoreKeys.AUTH);
-    useInt64 = Store.sp.getBool(StoreKeys.USE_INT_64);
-    inoreaderId = Store.sp.getString(StoreKeys.API_ID);
-    inoreaderKey = Store.sp.getString(StoreKeys.API_KEY);
-    removeInoreaderAd = Store.sp.getBool(StoreKeys.INOREADER_REMOVE_AD);
+    endpoint = Store.sp.getString(StoreKeys.ENDPOINT) ?? '';
+    username = Store.sp.getString(StoreKeys.USERNAME) ?? '';
+    password = Store.sp.getString(StoreKeys.PASSWORD) ?? '';
+    fetchLimit = Store.sp.getInt(StoreKeys.FETCH_LIMIT) ?? 50;
+    inoreaderId = Store.sp.getString(StoreKeys.API_ID) ?? '';
+    inoreaderKey = Store.sp.getString(StoreKeys.API_KEY) ?? '';
+    removeInoreaderAd = Store.sp.getBool(StoreKeys.INOREADER_REMOVE_AD) ?? false;
   }
 
   GReaderServiceHandler.fromValues(

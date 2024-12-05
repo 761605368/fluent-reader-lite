@@ -20,19 +20,22 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 class SubscriptionListPage extends StatefulWidget {
-  final ScrollTopNotifier scrollTopNotifier;
+  final List<String> sids;
+  final String title;
 
-  SubscriptionListPage(this.scrollTopNotifier, {Key key}) : super(key: key);
+  const SubscriptionListPage({
+    Key? key,
+    required this.sids,
+    required this.title,
+  }) : super(key: key);
 
   @override
-  _SubscriptionListPageState createState() {
-    return _SubscriptionListPageState();
-  }
+  _SubscriptionListPageState createState() => _SubscriptionListPageState();
 }
 
 class _SubscriptionListPageState extends State<SubscriptionListPage> {
-  List<String> sids;
-  String title;
+  late List<String> sids;
+  late String title;
   bool transitioning = false;
   bool unreadOnly = Store.sp.getBool(StoreKeys.UNREAD_SUBS_ONLY) ?? false;
 
@@ -51,6 +54,8 @@ class _SubscriptionListPageState extends State<SubscriptionListPage> {
   void initState() {
     super.initState();
     widget.scrollTopNotifier.addListener(_onScrollTop);
+    sids = widget.sids;
+    title = widget.title;
   }
 
   @override

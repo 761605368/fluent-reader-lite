@@ -47,6 +47,14 @@ abstract class StoreKeys {
   static const AUTH = "auth";
   static const USE_INT_64 = "useInt64";
   static const INOREADER_REMOVE_AD = "inoRemoveAd";
+
+  static const String TTS_SPEED = "tts_speed";
+  static const String TTS_LANGUAGE = "tts_language";
+  static const String TTS_ENABLED = "tts_enabled";
+
+  static const String ENVIRONMENT = "environment";
+  static const String API_HOST = "api_host";
+  static const String API_VERSION = "api_version";
 }
 
 class Store {

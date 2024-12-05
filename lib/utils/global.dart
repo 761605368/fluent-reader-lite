@@ -14,19 +14,32 @@ import 'package:flutter/cupertino.dart';
 import 'package:jaguar/serve/server.dart';
 import 'package:jaguar_flutter_asset/jaguar_flutter_asset.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class Global {
   static bool _initialized = false;
-  static GlobalModel globalModel;
-  static SourcesModel sourcesModel;
-  static ItemsModel itemsModel;
-  static FeedsModel feedsModel;
-  static GroupsModel groupsModel;
-  static SyncModel syncModel;
-  static ServiceHandler service;
-  static Database db;
-  static Jaguar server;
+  static late GlobalModel globalModel;
+  static late SourcesModel sourcesModel;
+  static late ItemsModel itemsModel;
+  static late FeedsModel feedsModel;
+  static late GroupsModel groupsModel;
+  static late SyncModel syncModel;
+  static ServiceHandler? service;
+  static late Database db;
+  static late Jaguar server;
   static final GlobalKey<NavigatorState> tabletPanel = GlobalKey();
+
+  static const bool isProduction = bool.fromEnvironment('dart.vm.product');
+  static const String apiHost = String.fromEnvironment('API_HOST', 
+    defaultValue: 'https://api.example.com');
+  static const int apiVersion = int.fromEnvironment('API_VERSION', 
+    defaultValue: 1);
+
+  static String get environment {
+    if (isProduction) return 'production';
+    if (kDebugMode) return 'development';
+    return 'staging';
+  }
 
   static void init() {
     assert(!_initialized);
@@ -36,7 +49,7 @@ abstract class Global {
     itemsModel = ItemsModel();
     feedsModel = FeedsModel();
     groupsModel = GroupsModel();
-    var serviceType = SyncService.values[Store.sp.getInt(StoreKeys.SYNC_SERVICE) ?? 0];
+    final serviceType = SyncService.values[Store.sp.getInt(StoreKeys.SYNC_SERVICE) ?? 0];
     switch (serviceType) {
       case SyncService.None:
         break;
@@ -82,7 +95,7 @@ abstract class Global {
 
   static NavigatorState responsiveNavigator(BuildContext context) {
     return tabletPanel.currentWidget != null
-      ? Global.tabletPanel.currentState
+      ? Global.tabletPanel.currentState!
       : Navigator.of(context, rootNavigator: true);
   }
 }

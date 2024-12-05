@@ -13,8 +13,8 @@ class TimeText extends StatefulWidget {
 }
 
 class _TimeTextState extends State<TimeText> {
-  Timer _timer;
-  Duration _duration;
+  late Timer _timer;
+  late Duration _duration;
 
   int diffMinutes() {
     final now = DateTime.now();
@@ -24,27 +24,12 @@ class _TimeTextState extends State<TimeText> {
   @override
   void initState() {
     super.initState();
-    updateTimer();
-  }
-
-  void updateTimer() {
-    final diff = diffMinutes();
-    Duration duration;
-    if (diff < 60) {
-      duration = Duration(minutes: 1);
-    } else if (diff < 60 * 24) {
-      duration = Duration(minutes: 60 - diff % 60);
-    } else {
-      duration = Duration(minutes: (60 * 24) - diff % (60 * 24));
-    }
-    if (_duration == null || duration.compareTo(_duration) != 0) {
-      _duration = duration;
-      if (_timer != null) _timer.cancel();
-      _timer = Timer.periodic(duration, (_) {
-        setState(() {});
-        updateTimer();
+    _duration = DateTime.now().difference(widget.date);
+    _timer = Timer.periodic(Duration(minutes: 1), (timer) {
+      setState(() {
+        _duration = DateTime.now().difference(widget.date);
       });
-    }
+    });
   }
 
   @override
