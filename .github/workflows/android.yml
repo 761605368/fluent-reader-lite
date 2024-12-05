@@ -1,4 +1,4 @@
-name: Build Android
+name: Build Android without null safety
 
 on:
   push:
@@ -23,14 +23,21 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
+    - name: Set up Old Dart (without null safety)
+      uses: dart-lang/setup-dart@v1
+      with:
+        dart-version: '2.7.2'  # 使用具体版本号，确保它是不带空安全特性的版本
+
     - name: Print environment info
       run: |
         echo "PATH=$PATH"
-        echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
-        which flutter || echo "Flutter not found in PATH"
+        which dart || echo "Dart not found in PATH"
+        dart --version
 
-    - name: Set up Flutter
-      uses: subosito/flutter-action@v2.5.0 # 使用具体版本号，如 v2.5.0，请根据实际情况调整
+    - name: Set up Flutter (compatible with old Dart)
+      uses: subosito/flutter-action@v2.5.0
+      with:
+        flutter-version: '1.22.6'  # 选择一个与旧 Dart SDK 兼容的 Flutter 版本
 
     - name: Cache Flutter packages
       uses: actions/cache@v3
@@ -45,10 +52,20 @@ jobs:
 
     - name: Build APK or AAB
       run: |
-        flutter build apk --release # 或者用 `flutter build appbundle --release` 构建AAB
+        BUILD_TYPE="apk"  # 或者用 "aab" 构建AAB
+        if [ "$BUILD_TYPE" == "aab" ]; then
+          flutter build appbundle --release
+        else
+          flutter build apk --release
+        fi
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: android-release
-        path: build/app/outputs/flutter-apk/app-release.apk # 或者是 .aab 文件路径
+        path: |
+          if [ "$BUILD_TYPE" == "aab" ]; then
+            build/app/outputs/bundle/release/*.aab
+          else
+            build/app/outputs/flutter-apk/app-release.apk
+          fi
