@@ -23,20 +23,26 @@ jobs:
         distribution: 'temurin'
         java-version: '11'
 
+    - name: Print environment info
+      run: |
+        echo "PATH=$PATH"
+        echo "GITHUB_ACTION_PATH=$GITHUB_ACTION_PATH"
+        which flutter || echo "Flutter not found in PATH"
+
     - name: Set up Flutter
-      uses: subosito/flutter-action@v2
+      uses: subosito/flutter-action@latest
       with:
-        flutter-version: 'stable'
+        flutter-version: '3.7.0' # 使用具体版本号
 
     - name: Get Flutter packages
       run: flutter pub get
 
     - name: Build APK or AAB
-      run: flutter build apk --release # 或者用 `flutter build appbundle --release` 构建AAB
+      run: |
+        flutter build apk --release # 或者用 `flutter build appbundle --release` 构建AAB
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v3
       with:
         name: android-release
-        path: |
-          build/app/outputs/flutter-apk/app-release.apk # 或者是 .aab 文件路径
+        path: build/app/outputs/flutter-apk/app-release.apk # 或者是 .aab 文件路径
