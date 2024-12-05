@@ -26,7 +26,7 @@ jobs:
     - name: Set up Old Dart (without null safety)
       uses: dart-lang/setup-dart@v1
       with:
-        dart-version: '2.7.2'  # 使用具体版本号，确保它是不带空安全特性的版本
+        dart-version: '2.12.0'  # 使用具体版本号，确保它是不带空安全特性的版本
 
     - name: Print environment info
       run: |
@@ -37,7 +37,7 @@ jobs:
     - name: Set up Flutter (compatible with old Dart)
       uses: subosito/flutter-action@v2.5.0
       with:
-        flutter-version: '1.22.6'  # 选择一个与旧 Dart SDK 兼容的 Flutter 版本
+        flutter-version: '2.0.6'  # 选择一个与旧 Dart SDK 兼容的 Flutter 版本
 
     - name: Cache Flutter packages
       uses: actions/cache@v3
