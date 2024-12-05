@@ -30,9 +30,15 @@ jobs:
         which flutter || echo "Flutter not found in PATH"
 
     - name: Set up Flutter
-      uses: subosito/flutter-action@latest
+      uses: subosito/flutter-action@v2.5.0 # 使用具体版本号，如 v2.5.0，请根据实际情况调整
+
+    - name: Cache Flutter packages
+      uses: actions/cache@v3
       with:
-        flutter-version: '3.7.0' # 使用具体版本号
+        path: ~/.pub-cache
+        key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-pub-
 
     - name: Get Flutter packages
       run: flutter pub get
