@@ -30,7 +30,7 @@ dependencies:
   share: ^0.6.5+4  # 使用与较低版本 Dart 兼容的版本
   package_info_plus: ^1.0.6  # 使用与较低版本 Dart 兼容的版本
   crypto: ^2.1.5  # 使用与较低版本 Dart 兼容的版本
-  responsive_builder: ^0.3.1  # 使用与较低版本 Dart 兼容的版本
+  responsive_builder: ^0.4.0  # 更新为与较低版本 Dart 兼容的版本
   cached_network_image: ^2.5.0  # 使用与较低版本 Dart 兼容的版本
   flutter_cache_manager: ^2.1.1  # 使用与较低版本 Dart 兼容的版本
   lpinyin: ^1.0.3  # 使用与较低版本 Dart 兼容的版本
